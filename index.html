@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do I Have Enough Time? | Evidence-Informed Teaching and Professional Practice in Tertiary Education</title>
+<meta name="description" content="A short interactive tool to help you work out whether you have enough free time each week to take on this module.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16233A;
+    --ink-soft:#3C4A61;
+    --paper:#F4F4EF;
+    --paper-raised:#FFFFFF;
+    --amber:#C68A33;
+    --amber-deep:#A8721F;
+    --slate:#5C6B7A;
+    --coral:#B9503A;
+    --coral-bg:#F6E7E2;
+    --amberband-bg:#F8EEDC;
+    --moss:#3F7A5C;
+    --moss-bg:#E4EFE7;
+    --line:#DDD9CD;
+    --line-soft:#E9E6DC;
+    --radius:4px;
+    --max:920px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Source Sans 3', sans-serif;
+    font-size:17px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 0.4em 0;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'IBM Plex Mono', monospace;
+  }
+  a{color:var(--amber-deep);}
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ---- Header ---- */
+  header.masthead{
+    border-bottom:1px solid var(--line);
+    padding:44px 0 36px 0;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    color:var(--amber-deep);
+    margin-bottom:14px;
+    display:block;
+  }
+  header.masthead h1{
+    font-size:clamp(28px, 4.4vw, 42px);
+    line-height:1.08;
+    max-width:14ch;
+  }
+  header.masthead .module-name{
+    color:var(--slate);
+    font-family:'Source Sans 3', sans-serif;
+    font-size:16px;
+    font-weight:600;
+    margin-top:14px;
+  }
+
+  section{
+    padding:40px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  section:last-of-type{border-bottom:none;}
+
+  .lede{
+    font-size:19px;
+    max-width:62ch;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Module facts strip ---- */
+  .facts{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    margin-top:28px;
+  }
+  .facts div{
+    background:var(--paper-raised);
+    padding:20px 22px;
+  }
+  .facts .num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:28px;
+    font-weight:600;
+    color:var(--ink);
+    display:block;
+  }
+  .facts .label{
+    font-size:13.5px;
+    color:var(--slate);
+    margin-top:4px;
+  }
+  @media (max-width:640px){
+    .facts{grid-template-columns:1fr;}
+  }
+
+  /* ---- Week bar (signature element) ---- */
+  .weekbar-holder{
+    margin-top:34px;
+  }
+  .weekbar-labelrow{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:8px;
+    font-size:14px;
+    color:var(--slate);
+  }
+  .weekbar{
+    width:100%;
+    height:38px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    display:flex;
+    overflow:hidden;
+    position:relative;
+  }
+  .weekbar .seg{
+    height:100%;
+    transition:width 0.18s ease;
+    min-width:0;
+  }
+  .weekbar .seg.free{
+    background:repeating-linear-gradient(135deg, var(--amber), var(--amber) 6px, var(--amber-deep) 6px, var(--amber-deep) 12px);
+  }
+  .weekbar .over-warning{
+    position:absolute;
+    inset:0;
+    background:var(--coral);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  .weekbar .over-warning.hidden{display:none;}
+
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px 22px;
+    margin-top:14px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+  }
+  .legend .item{display:flex;align-items:center;gap:7px;}
+  .legend .swatch{width:11px;height:11px;border-radius:2px;flex-shrink:0;}
+
+  /* ---- Sliders ---- */
+  .activity{
+    padding:22px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .activity:last-child{border-bottom:none;}
+  .activity-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:6px;
+  }
+  .activity-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:19px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .activity-swatch{
+    width:12px;height:12px;border-radius:50%;flex-shrink:0;
+  }
+  .activity-tip{
+    font-size:14.5px;
+    color:var(--slate);
+    max-width:56ch;
+    margin:2px 0 14px 0;
+  }
+  .activity-value{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:20px;
+    font-weight:600;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .activity-value .unit{
+    font-size:13px;
+    font-weight:400;
+    color:var(--slate);
+    margin-left:2px;
+  }
+  input[type="range"]{
+    -webkit-appearance:none;
+    width:100%;
+    height:6px;
+    border-radius:3px;
+    background:var(--line);
+    outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:20px;height:20px;
+    border-radius:50%;
+    background:var(--paper-raised);
+    border:3px solid var(--ink);
+    cursor:pointer;
+    margin-top:-7px;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:20px;height:20px;
+    border-radius:50%;
+    background:var(--paper-raised);
+    border:3px solid var(--ink);
+    cursor:pointer;
+  }
+  input[type="range"]::-webkit-slider-runnable-track{
+    height:6px;border-radius:3px;
+  }
+
+  /* ---- Result panel ---- */
+  .result-banner{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-left:5px solid var(--slate);
+    padding:30px 32px;
+    margin-top:8px;
+    transition:border-color 0.2s ease;
+  }
+  .result-banner.band-tight{border-left-color:var(--coral); background:var(--coral-bg);}
+  .result-banner.band-edge{border-left-color:var(--amber-deep); background:var(--amberband-bg);}
+  .result-banner.band-ok{border-left-color:var(--moss); background:var(--moss-bg);}
+  .result-banner.band-good{border-left-color:var(--moss); background:var(--moss-bg);}
+  .result-headline{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:23px;
+    margin-bottom:10px;
+  }
+  .result-body p{margin:0 0 12px 0;}
+  .result-body p:last-child{margin-bottom:0;}
+  .result-figure{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px;
+    color:var(--ink-soft);
+    background:rgba(255,255,255,0.5);
+    display:inline-block;
+    padding:3px 9px;
+    border-radius:3px;
+    margin-bottom:14px;
+  }
+
+  /* ---- Buttons ---- */
+  .btn{
+    font-family:'Source Sans 3', sans-serif;
+    font-weight:600;
+    font-size:15.5px;
+    padding:13px 26px;
+    border-radius:var(--radius);
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+    letter-spacing:0.01em;
+  }
+  .btn:hover{background:#233252;}
+  .btn:focus-visible, a:focus-visible, input:focus-visible{
+    outline:3px solid var(--amber);
+    outline-offset:2px;
+  }
+  .btn.secondary{
+    background:transparent;
+    color:var(--ink);
+    border:1px solid var(--ink);
+  }
+  .btn.secondary:hover{background:var(--paper-raised);}
+  .btn-row{
+    display:flex;
+    gap:14px;
+    margin-top:30px;
+    flex-wrap:wrap;
+  }
+
+  #interpret-section{display:none;}
+
+  footer{
+    padding:34px 0 50px 0;
+    font-size:13.5px;
+    color:var(--slate);
+  }
+  footer p{max-width:70ch;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+
+  .skip-link{
+    position:absolute; left:-9999px; top:auto;
+    background:var(--ink); color:#fff; padding:10px 16px; z-index:100;
+  }
+  .skip-link:focus{left:16px; top:16px;}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#calculator">Skip to the calculator</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="eyebrow">A guide, not a test</span>
+    <h1>Do I have enough time to take this on?</h1>
+    <p class="module-name">Evidence-Informed Teaching and Professional Practice in Tertiary Education</p>
+  </div>
+</header>
+
+<section id="intro">
+  <div class="wrap">
+    <p class="lede">This tool helps you work out how much genuinely free time you have in a typical week, and whether that's likely to be enough to study this module alongside everything else you're juggling. It takes about two minutes. The result is a guide, not a verdict &mdash; only you know your own week.</p>
+
+    <div class="facts">
+      <div>
+        <span class="num">100</span>
+        <span class="label">hours of study, in total</span>
+      </div>
+      <div>
+        <span class="num">15</span>
+        <span class="label">weeks, start to finish</span>
+      </div>
+      <div>
+        <span class="num">~6&ndash;7</span>
+        <span class="label">hours a week, on average</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calculator">
+  <div class="wrap">
+    <h2>Your typical week</h2>
+    <p class="activity-tip" style="margin-top:0;">Move each slider to roughly how many hours a week you spend on each. Don't overthink the exact number &mdash; a sensible estimate is fine. A week has 168 hours in total.</p>
+
+    <div class="weekbar-holder">
+      <div class="weekbar-labelrow">
+        <span><strong class="mono" id="committedLabel">0</strong> hours committed</span>
+        <span><strong class="mono" id="freeLabel">168</strong> hours free</span>
+      </div>
+      <div class="weekbar" id="weekbar">
+        <div class="over-warning hidden" id="overWarning">You've allocated more than 168 hours &mdash; try lowering something</div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div id="activities"></div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="wrap">
+    <div class="btn-row">
+      <button class="btn" id="seeResultBtn">See what this means for me</button>
+      <button class="btn secondary" id="resetBtn">Reset sliders</button>
+    </div>
+  </div>
+</section>
+
+<section id="interpret-section">
+  <div class="wrap">
+    <h2>What this means for you</h2>
+    <div class="result-banner band-tight" id="resultBanner">
+      <div class="result-figure" id="resultFigure"></div>
+      <div class="result-headline" id="resultHeadline"></div>
+      <div class="result-body" id="resultBody"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Results are a guide only. Actual study time varies week to week &mdash; expect to need more during assignment periods and less in quieter weeks. If you're weighing this up, it's worth talking it through with the module team before you enrol.</p>
+    <p>Adapted from the <a href="https://github.com/studentsuccesstoolbox/StudentSuccessToolbox" target="_blank" rel="noopener">Student Success Toolbox</a> (Dublin City University, IT Sligo, Maynooth University and Dundalk Institute of Technology), licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+
+  // ---- Data ----
+  var activities = [
+    { key:'work', name:'Work', color:'#16233A',
+      tip:'Include your commute and any work you regularly take home or catch up on outside hours.',
+      max:80 },
+    { key:'family', name:'Family / caring', color:'#5C6B7A',
+      tip:'Time with a partner, children, or other family members, including any caring responsibilities.',
+      max:80 },
+    { key:'household', name:'Household', color:'#8A9AA8',
+      tip:'Cooking, cleaning, shopping and the other jobs that keep a household running.',
+      max:60 },
+    { key:'screen', name:'Screen time / hobbies', color:'#C68A33',
+      tip:'TV, social media, gaming, reading for pleasure, and other downtime at home.',
+      max:60 },
+    { key:'social', name:'Social / leisure', color:'#A8721F',
+      tip:'Time out of the house &mdash; seeing friends, exercise, and things you do for yourself.',
+      max:60 },
+    { key:'sleep', name:'Sleep', color:'#3F7A5C',
+      tip:'Include naps and any extra sleep at weekends.',
+      max:84 }
+  ];
+
+  var defaults = { work:37, family:20, household:10, screen:10, social:8, sleep:49 };
+
+  // Module parameters
+  var MODULE_TOTAL_HOURS = 100;
+  var MODULE_WEEKS = 15;
+  var MODULE_AVG_WEEKLY = MODULE_TOTAL_HOURS / MODULE_WEEKS; // ~6.67
+
+  var activitiesEl = document.getElementById('activities');
+  var legendEl = document.getElementById('legend');
+  var weekbarEl = document.getElementById('weekbar');
+  var overWarningEl = document.getElementById('overWarning');
+  var committedLabel = document.getElementById('committedLabel');
+  var freeLabel = document.getElementById('freeLabel');
+
+  // Build sliders
+  activities.forEach(function(a){
+    var row = document.createElement('div');
+    row.className = 'activity';
+    row.innerHTML =
+      '<div class="activity-top">' +
+        '<div class="activity-name"><span class="activity-swatch" style="background:'+a.color+'"></span>'+a.name+'</div>' +
+        '<div class="activity-value"><span id="val-'+a.key+'">'+defaults[a.key]+'</span><span class="unit"> hrs/wk</span></div>' +
+      '</div>' +
+      '<p class="activity-tip">'+a.tip+'</p>' +
+      '<input type="range" min="0" max="'+a.max+'" step="1" value="'+defaults[a.key]+'" id="slider-'+a.key+'" aria-label="'+a.name+' hours per week">';
+    activitiesEl.appendChild(row);
+
+    var legendItem = document.createElement('div');
+    legendItem.className = 'item';
+    legendItem.innerHTML = '<span class="swatch" style="background:'+a.color+'"></span>'+a.name;
+    legendEl.appendChild(legendItem);
+  });
+
+  var freeLegend = document.createElement('div');
+  freeLegend.className = 'item';
+  freeLegend.innerHTML = '<span class="swatch" style="background:repeating-linear-gradient(135deg, #C68A33, #C68A33 3px, #A8721F 3px, #A8721F 6px);"></span>Free time';
+  legendEl.appendChild(freeLegend);
+
+  function getValues(){
+    var vals = {};
+    activities.forEach(function(a){
+      vals[a.key] = parseInt(document.getElementById('slider-'+a.key).value, 10);
+    });
+    return vals;
+  }
+
+  function render(){
+    var vals = getValues();
+    var committed = 0;
+    Object.keys(vals).forEach(function(k){ committed += vals[k]; });
+    var free = 168 - committed;
+
+    committedLabel.textContent = committed;
+    freeLabel.textContent = free < 0 ? 0 : free;
+
+    // Update activity value labels
+    activities.forEach(function(a){
+      document.getElementById('val-'+a.key).textContent = vals[a.key];
+    });
+
+    // Render week bar
+    weekbarEl.querySelectorAll('.seg').forEach(function(el){ el.remove(); });
+
+    if (committed > 168){
+      overWarningEl.classList.remove('hidden');
+    } else {
+      overWarningEl.classList.add('hidden');
+      var scale = 100 / 168;
+      activities.forEach(function(a){
+        var seg = document.createElement('div');
+        seg.className = 'seg';
+        seg.style.width = (vals[a.key] * scale) + '%';
+        seg.style.background = a.color;
+        weekbarEl.appendChild(seg);
+      });
+      var freeSeg = document.createElement('div');
+      freeSeg.className = 'seg free';
+      freeSeg.style.width = (Math.max(free,0) * scale) + '%';
+      weekbarEl.appendChild(freeSeg);
+    }
+
+    return { committed: committed, free: free };
+  }
+
+  activities.forEach(function(a){
+    document.getElementById('slider-'+a.key).addEventListener('input', render);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    activities.forEach(function(a){
+      document.getElementById('slider-'+a.key).value = defaults[a.key];
+    });
+    render();
+    document.getElementById('interpret-section').style.display = 'none';
+  });
+
+  // ---- Interpretation ----
+  // Bands based on free hours per week, calibrated against this module's
+  // requirement of ~6.7 hrs/week average (100 hrs over 15 weeks), with
+  // headroom built in for assignment weeks which need more than the average.
+  var bands = [
+    {
+      max: 4,
+      cls: 'band-tight',
+      headline: "This is likely to be a real stretch",
+      body: "<p>This module needs around <strong>" + MODULE_AVG_WEEKLY.toFixed(1) + " hours a week on average</strong> (100 hours over 15 weeks), and some weeks &mdash; particularly around assignments &mdash; will need noticeably more than that. With only a few hours of free time in a typical week, fitting this in is going to be difficult without changing something else first.</p><p>It's worth having an honest look at what could shift: could work, family or household commitments flex even slightly during term? Talk it through with the module team before you commit, so you go in with a realistic plan rather than finding out the hard way in week three.</p>"
+    },
+    {
+      max: MODULE_AVG_WEEKLY + 1, // roughly up to ~7.7
+      cls: 'band-edge',
+      headline: "You're right at the edge",
+      body: "<p>Your free time is close to the <strong>" + MODULE_AVG_WEEKLY.toFixed(1) + " hours a week</strong> this module asks for on average &mdash; which covers a typical week, but leaves very little slack for the weeks where more is needed, such as around assignments.</p><p>This can still work, but it's worth going in with a plan: a fixed time each week that's protected for study, and an early conversation with whoever shares your week (family, housemates, your manager) about what quiet weeks and busy weeks might look like.</p>"
+    },
+    {
+      max: 12,
+      cls: 'band-ok',
+      headline: "This looks workable",
+      body: "<p>You have some buffer above the <strong>" + MODULE_AVG_WEEKLY.toFixed(1) + " hours a week</strong> this module typically needs, which should help absorb busier weeks without everything else in your life taking the hit.</p><p>A bit of planning will still pay off &mdash; block out a regular time and place for study, and expect some weeks to need more than others. You should be in a reasonable position to take this on.</p>"
+    },
+    {
+      max: 999,
+      cls: 'band-good',
+      headline: "You should have plenty of room",
+      body: "<p>You've got well above the <strong>" + MODULE_AVG_WEEKLY.toFixed(1) + " hours a week</strong> this module asks for on average, including enough headroom for busier weeks around assignments.</p><p>The main risk at this end is the opposite one &mdash; with lots of free time it's easy to let study drift rather than building a routine. A rough weekly plan will still help you make good use of the time you have.</p>"
+    }
+  ];
+
+  function pickBand(freeHours){
+    for (var i=0;i<bands.length;i++){
+      if (freeHours <= bands[i].max) return bands[i];
+    }
+    return bands[bands.length-1];
+  }
+
+  document.getElementById('seeResultBtn').addEventListener('click', function(){
+    var vals = render();
+    var free = Math.max(vals.free, 0);
+    var band = pickBand(free);
+
+    var banner = document.getElementById('resultBanner');
+    banner.className = 'result-banner ' + band.cls;
+    document.getElementById('resultFigure').textContent = free + ' hours free a week, out of ' + 168 + ' \u2014 this module needs roughly ' + MODULE_AVG_WEEKLY.toFixed(1) + ' hrs/week on average';
+    document.getElementById('resultHeadline').textContent = band.headline;
+    document.getElementById('resultBody').innerHTML = band.body;
+
+    var section = document.getElementById('interpret-section');
+    section.style.display = 'block';
+    section.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
