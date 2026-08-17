@@ -418,14 +418,20 @@
   // ---- Data ----
   var activities = [
     { key:'work', name:'Work', color:'#16233A',
-      tip:'Include your commute and any work you regularly take home or catch up on outside hours.',
+      tip:'Time spent doing your paid work, including any you regularly take home or catch up on outside hours.',
       max:80 },
+    { key:'travel', name:'Travel / commuting', color:'#46586E',
+      tip:'Getting to and from work, plus any other regular travel in your week &mdash; the school run, appointments, and so on.',
+      max:30 },
     { key:'family', name:'Family / caring', color:'#5C6B7A',
       tip:'Time with a partner, children, or other family members, including any caring responsibilities.',
       max:80 },
     { key:'household', name:'Household', color:'#8A9AA8',
       tip:'Cooking, cleaning, shopping and the other jobs that keep a household running.',
       max:60 },
+    { key:'otherstudy', name:'Other study / CPD', color:'#6B4C6B',
+      tip:'Any other course, qualification, or professional development you\u2019re currently doing alongside this module.',
+      max:40 },
     { key:'screen', name:'Screen time / hobbies', color:'#C68A33',
       tip:'TV, social media, gaming, reading for pleasure, and other downtime at home.',
       max:60 },
@@ -437,7 +443,7 @@
       max:84 }
   ];
 
-  var defaults = { work:37, family:20, household:10, screen:10, social:8, sleep:49 };
+  var defaults = { work:35, travel:5, family:20, household:10, otherstudy:3, screen:10, social:8, sleep:49 };
 
   // Module parameters
   var MODULE_TOTAL_HOURS = 100;
